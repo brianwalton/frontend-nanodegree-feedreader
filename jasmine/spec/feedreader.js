@@ -71,7 +71,7 @@ $(function() {
          * should have two expectations: does the menu display when
          * clicked and does it hide when clicked again.
          */
-        describe('Menu changes visibility', function(done) {
+        describe('Menu changes visibility', function() {
             // Use the asynchronous simulation pattern to enter a click
             // then wait for 1 second to give the DOM elements a chance to
             // update with the new transform: transition values.
@@ -87,7 +87,7 @@ $(function() {
                 var x = parseInt($('div.slide-menu').css('transform').split(',')[4]);
                 expect(x).toBeDefined();
                 // Check that menu is on-screen
-                expect(x).toBe(0);
+                expect(x).toEqual(0);
             });
 
             // Another click and a delay. Transition values should be updated again.
