@@ -108,26 +108,18 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
-        var containerLinkCount;
         beforeEach(function(done) {
             // Empty the current entries from the container
             $('div.feed').empty();
-            //  Save the current link count.  Should all have been removed.
-            containerLinkCount = $('div.feed a').length;
-            loadFeed(1, function() {
-                done();
-            });
+            loadFeed(1, done);
         });
 
-        it('loadFeed adds at least one entry to feed container', function(done) {
-            // Check that the container was empty before
-            expect(containerLinkCount).toBeDefined();
-            expect(containerLinkCount).toBe(0);
-            // Get the new count of the links that were loaded
-            var newLength = $('div.feed a').length;
-            expect(newLength).toBeDefined();
-            expect(newLength).toBeGreaterThan(0);
-            done();
+        it('loadFeed adds at least one entry to feed container', function() {
+            // Look for an element with an .entry class.
+            var newEntries = $('div.feed .entry');
+            // console.log('ne=',newEntries);
+            expect(newEntries).toBeDefined();
+            expect(newEntries.length).toBeGreaterThan(0);
         });
 
     });
@@ -141,24 +133,31 @@ $(function() {
          */
         var beforeHref;
         beforeEach(function(done) {
-            // Copy the link from the first element in the current feed list
-            // then load a new feed.
-            beforeHref = $('div.feed a:first').attr('href');
+            // Start with a clean loadFeed.
+            $('div.feed').empty();
             loadFeed(2, function() {
-                done();
+               // Copy the link from the first element in the new feed list
+               // then load another feed and check for change.
+               beforeHref = $('div.feed a:first').attr('href');
+               if (typeof beforeHref === 'undefined') {
+                  console.log('New Feed: loadFeed() failure');
+                  done();
+               } else {
+                  loadFeed(3, done);
+               }
             });
         });
 
-        it('loadFeed actually changes content', function(done) {
-            // Make the old first link was collected in beforeEach
+        it('loadFeed actually changes content', function() {
+            // Check the first link was collected in beforeEach
             expect(beforeHref).toBeDefined();
             expect(beforeHref.length).toBeGreaterThan(0);
-            // Get the new first link.  They should be different
+            // Check the second link that was collected. They should be different
             var afterHref = $('div.feed a:first').attr('href');
+            // console.log('before=',beforeHref,'after=',afterHref);
             expect(afterHref).toBeDefined();
             expect(afterHref.length).toBeGreaterThan(0);
-            expect(beforeHref === afterHref).toBe(false);
-            done();
+            expect(beforeHref).not.toEqual(afterHref);
         });
     });
 
